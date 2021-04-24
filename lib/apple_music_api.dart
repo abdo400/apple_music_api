@@ -10,6 +10,10 @@ class AppleMusic {
   //Initialize with the JWT KEY
   AppleMusic({required this.jwtKey});
 
+  AppleMusic._privateConstructor();
+
+  static final AppleMusic instance = AppleMusic._privateConstructor();
+
   static const STOREFRONT = 'us';
   static const BASE_URL = 'https://api.music.apple.com/v1/catalog';
   static const GENRE_URL = "$BASE_URL/$STOREFRONT/genres";
@@ -22,6 +26,7 @@ class AppleMusic {
 
   Future<dynamic> _fetchJSON(String url) async {
     Uri uri = Uri.parse(url);
+    print(jwtKey);
     final response =
         await http.get(uri, headers: {'Authorization': "Bearer $jwtKey"});
     if (response.statusCode == 200) {
