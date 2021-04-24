@@ -7,7 +7,7 @@ import './models/index.dart';
 
 /// A Calculator.
 class AppleMusic {
-  //Initialize with the JWT KEY
+  // Initialize with the JWT KEY //
   AppleMusic({required this.jwtKey});
 
   AppleMusic._privateConstructor();
