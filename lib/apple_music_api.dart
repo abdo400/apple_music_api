@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import './models/index.dart';
 
-/// A Calculator.
 class AppleMusic {
   // Initialize with the JWT KEY //
   AppleMusic({required this.jwtKey});
@@ -22,7 +21,6 @@ class AppleMusic {
 
   Future<dynamic> _fetchJSON(String url) async {
     Uri uri = Uri.parse(url);
-    print(jwtKey);
     final response =
         await http.get(uri, headers: {'authorization': "Bearer $jwtKey"});
     if (response.statusCode == 200) {
@@ -54,8 +52,9 @@ class AppleMusic {
     return Artist.fromJson(json['data'][0]);
   }
 
-  Future<Chart> fetchAlbumsAndSongsTopChart() async {
-    final url = "$_CHART_URL?types=songs,albums";
+  Future<Chart> fetchTopChart(
+      {List<QueryType> queryTypes = QueryType.values}) async {
+    final url = "$_CHART_URL?types=${_queryType(queryTypes)}";
     final json = await _fetchJSON(url);
     final songChartJSON = json['results']['songs'][0];
     final songChart = SongChart.fromJson(songChartJSON);
@@ -67,8 +66,10 @@ class AppleMusic {
     return chart;
   }
 
-  Future<MusicSearch> search(String query) async {
-    final url = "$_SEARCH_URL?types=artists,albums,songs&limit=15&term=$query";
+  Future<MusicSearch> search(String query,
+      {List<QueryType> queryTypes = QueryType.values}) async {
+    final url =
+        "$_SEARCH_URL?types=${_queryType(queryTypes)}&limit=15&term=$query";
     final encoded = Uri.encodeFull(url);
     final json = await _fetchJSON(encoded);
 
@@ -94,5 +95,35 @@ class AppleMusic {
 
     return MusicSearch(
         albums: albums, songs: songs, artists: artists, term: query);
+  }
+
+  String _queryType(List<QueryType> queryTypes) {
+    String queryType = '';
+    queryTypes.forEach((type) {
+      queryType += type.title + ',';
+    });
+    return queryType.substring(
+        0, queryType.length > 0 ? queryType.length - 1 : 0);
+  }
+}
+
+enum QueryType {
+  song,
+  artist,
+  album,
+}
+
+extension QueryTypeExtension on QueryType {
+  String get title {
+    switch (this) {
+      case QueryType.album:
+        return 'albums';
+      case QueryType.song:
+        return 'songs';
+      case QueryType.artist:
+        return 'artist';
+      default:
+        return '';
+    }
   }
 }
