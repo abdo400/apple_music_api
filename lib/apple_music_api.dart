@@ -52,9 +52,8 @@ class AppleMusic {
     return Artist.fromJson(json['data'][0]);
   }
 
-  Future<Chart> fetchTopChart(
-      {List<QueryType> queryTypes = QueryType.values}) async {
-    final url = "$_CHART_URL?types=${_queryType(queryTypes)}";
+  Future<Chart> fetchTopChart() async {
+    final url = "$_CHART_URL?types=songs,albums";
     final json = await _fetchJSON(url);
     final songChartJSON = json['results']['songs'][0];
     final songChart = SongChart.fromJson(songChartJSON);
