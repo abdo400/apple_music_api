@@ -38,12 +38,12 @@ class Album {
       artistId = relationshipJSON['artists']['data'][0]['id'];
     }
 
-    String shortNote = '';
-    String name = '';
-    String artworkRawUrl = '';
-    String artistName = '';
-    String releaseDate = '';
-    List<dynamic> genreNames = [];
+    String? shortNote = '';
+    String? name = '';
+    String? artworkRawUrl = '';
+    String? artistName = '';
+    String? releaseDate = '';
+    List<dynamic>? genreNames = [];
 
     final attributesJSON = json['attributes'];
     if (attributesJSON != null) {
