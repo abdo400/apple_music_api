@@ -27,7 +27,8 @@ class AppleMusic {
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
-        throw Exception('Failed to fetch data');
+        throw Exception(
+            'Failed to fetch data. Error: ${response.body.toString()}');
       }
     } on Exception catch (e) {
       print('[AppleMusicAPI] _fetchJSON error: $e');
