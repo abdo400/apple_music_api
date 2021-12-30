@@ -20,49 +20,80 @@ class AppleMusic {
   late final jwtKey;
 
   Future<dynamic> _fetchJSON(String url) async {
-    Uri uri = Uri.parse(url);
-    final response =
-        await http.get(uri, headers: {'authorization': "Bearer $jwtKey"});
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to fetch data');
+    try {
+      Uri uri = Uri.parse(url);
+      final response =
+          await http.get(uri, headers: {'authorization': "Bearer $jwtKey"});
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to fetch data');
+      }
+    } on Exception catch (e) {
+      print('[AppleMusicAPI] _fetchJSON error: $e');
+      throw e;
     }
   }
 
   Future<Song> fetchSongById(String id) async {
-    final json = await _fetchJSON("$_SONG_URL/$id");
-    return Song.fromJson(json['data'][0]);
+    try {
+      final json = await _fetchJSON("$_SONG_URL/$id");
+      return Song.fromJson(json['data'][0]);
+    } on Exception catch (e) {
+      print('[AppleMusicAPI] fetchSongById error: $e');
+      throw e;
+    }
   }
 
   Future<List<Genre>> fetchGenres() async {
-    final json = await _fetchJSON(GENRE_URL);
-    final data = json['data'] as List;
-    final genres = data.map((d) => Genre.fromJson(d));
-    return genres.toList();
+    try {
+      final json = await _fetchJSON(GENRE_URL);
+      final data = json['data'] as List;
+      final genres = data.map((d) => Genre.fromJson(d));
+      return genres.toList();
+    } on Exception catch (e) {
+      print('[AppleMusicAPI] fetchGenres error: $e');
+      throw e;
+    }
   }
 
   Future<Album> fetchAlbumById(String id) async {
-    final json = await _fetchJSON("$_ALBUM_URL/$id");
-    return Album.fromJson(json['data'][0]);
+    try {
+      final json = await _fetchJSON("$_ALBUM_URL/$id");
+      return Album.fromJson(json['data'][0]);
+    } on Exception catch (e) {
+      print('[AppleMusicAPI] fetchAlbumById error: $e');
+      throw e;
+    }
   }
 
   Future<Artist> fetchArtistById(String id) async {
-    final json = await _fetchJSON("$_ARTIST_URL/$id?include=albums,songs");
-    return Artist.fromJson(json['data'][0]);
+    try {
+      final json = await _fetchJSON("$_ARTIST_URL/$id?include=albums,songs");
+      return Artist.fromJson(json['data'][0]);
+    } on Exception catch (e) {
+      // TODO
+      print('[AppleMusicAPI] fetchArtistById error: $e');
+      throw e;
+    }
   }
 
   Future<Chart> fetchTopChart() async {
-    final url = "$_CHART_URL?types=songs,albums";
-    final json = await _fetchJSON(url);
-    final songChartJSON = json['results']['songs'][0];
-    final songChart = SongChart.fromJson(songChartJSON);
+    try {
+      final url = "$_CHART_URL?types=songs,albums";
+      final json = await _fetchJSON(url);
+      final songChartJSON = json['results']['songs'][0];
+      final songChart = SongChart.fromJson(songChartJSON);
 
-    final albumChartJSON = json['results']['albums'][0];
-    final albumChart = AlbumChart.fromJson(albumChartJSON);
+      final albumChartJSON = json['results']['albums'][0];
+      final albumChart = AlbumChart.fromJson(albumChartJSON);
 
-    final chart = Chart(albumChart: albumChart, songChart: songChart);
-    return chart;
+      final chart = Chart(albumChart: albumChart, songChart: songChart);
+      return chart;
+    } on Exception catch (e) {
+      print('[AppleMusicAPI] fetchTopChart error: $e');
+      throw e;
+    }
   }
 
   Future<MusicSearch> search(String query,
