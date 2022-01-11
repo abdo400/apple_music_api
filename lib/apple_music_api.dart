@@ -28,7 +28,7 @@ class AppleMusic {
         return json.decode(response.body);
       } else {
         print(
-            '[AppleMusicAPI] _fetchJSON Error -- Reponse body: ${response.body.toString()}');
+            '[AppleMusicAPI] _fetchJSON Error -- Reponse statusCode: ${response.statusCode}');
         throw Exception(
             'Failed to fetch data. Error: ${response.body.toString()}');
       }
@@ -81,10 +81,14 @@ class AppleMusic {
     }
   }
 
-  Future<Chart> fetchTopChart() async {
+  Future<Chart> fetchTopChart({String genre = ""}) async {
     try {
-      final url = "$_CHART_URL?types=songs,albums";
+      var url = "$_CHART_URL?types=songs,albums";
+      if (genre.isNotEmpty) {
+        url += "&genre=$genre";
+      }
       final json = await _fetchJSON(url);
+      print('[AppleMusicAPI] fetchTopChart json data: $json');
       final songChartJSON = json['results']['songs'][0];
       final songChart = SongChart.fromJson(songChartJSON);
 
